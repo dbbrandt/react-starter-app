@@ -14,13 +14,13 @@ const NavBar: React.FC<NavBarProps> = ({ onSettingsClick }) => {
 
   return (
     <AppBar position="fixed" sx={{ backgroundColor: 'white' }}>
-      <Toolbar sx={{ padding: 0, minHeight: '56px !important' }}>
+      <Toolbar sx={{ padding: 0, minHeight: '72px !important' }}>
         <Box sx={{ display: 'flex', width: '100%', position: 'relative' }}>
           <Box 
             component={Link} 
             to="/" 
             sx={{ 
-              width: '40%', 
+              width: '33.33%', 
               textAlign: 'center',
               color: isActive('/') ? '#000' : '#666',
             }} 
@@ -36,7 +36,7 @@ const NavBar: React.FC<NavBarProps> = ({ onSettingsClick }) => {
             component={Link} 
             to="/details" 
             sx={{ 
-              width: '40%', 
+              width: '33.33%', 
               textAlign: 'center',
               color: isActive('/details') ? '#000' : '#666',
             }} 
@@ -48,31 +48,13 @@ const NavBar: React.FC<NavBarProps> = ({ onSettingsClick }) => {
             </Typography>
           </Box>
 
-          <Box 
-            sx={{ 
-              width: '20%', 
-              textAlign: 'center',
-            }} 
-            className="nav-link"
+          <IconButton
+            className="settings-button"
+            onClick={onSettingsClick}
+            size="large"
           >
-            <IconButton 
-              onClick={onSettingsClick}
-              sx={{ 
-                color: '#666',
-                padding: 0,
-                '&:hover': {
-                  backgroundColor: 'transparent'
-                }
-              }}
-            >
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <SettingsIcon />
-                <Typography variant="caption">
-                  Settings
-                </Typography>
-              </Box>
-            </IconButton>
-          </Box>
+            <SettingsIcon />
+          </IconButton>
         </Box>
       </Toolbar>
     </AppBar>

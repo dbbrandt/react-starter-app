@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  height: 56px;
-  padding: 8px 0;
+  height: 72px;
+  padding: 12px 0;
   position: relative;
 }
 
@@ -24,12 +24,12 @@
 }
 
 .nav-link svg {
-  font-size: 24px !important;
-  margin-bottom: 2px;
+  font-size: 32px !important;
+  margin-bottom: 4px;
 }
 
-.nav-link .MuiTypography-caption {
-  font-size: 12px;
+.nav-link span {
+  font-size: 14px;
   line-height: 1;
 }
 
@@ -38,4 +38,16 @@
   z-index: 1000;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.settings-button {
+  position: absolute !important;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.settings-button svg {
+  font-size: 28px !important;
 }
