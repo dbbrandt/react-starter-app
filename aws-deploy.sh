@@ -28,7 +28,9 @@ aws s3 sync build/ s3://$BUCKET_NAME --delete --profile $AWS_PROFILE
 
 # Invalidate CloudFront cache
 echo "Invalidating CloudFront cache..."
-DISTRIBUTION_ID=$(aws cloudfront list-distributions --profile $AWS_PROFILE --query "DistributionList.Items[?Origins.Items[?DomainName=='$BUCKET_NAME.s3.amazonaws.com']].Id" --output text)
+DISTRIBUTION_ID=$(aws cloudfront list-distributions --profile $AWS_PROFILE \
+    --query "DistributionList.Items[?Origins.Items[?DomainName=='$BUCKET_NAME.s3.amazonaws.com']].Id" \
+    --output text | awk '{print $1}')
 
 if [ ! -z "$DISTRIBUTION_ID" ]; then
     aws cloudfront create-invalidation \
