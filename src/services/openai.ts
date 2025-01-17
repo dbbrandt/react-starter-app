@@ -25,7 +25,7 @@ export const sendMessage = async (messages: ChatMessage[]): Promise<string> => {
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant. Format your responses in markdown to make them more readable. Use headings, lists, bold, italic, and code blocks where appropriate."
+          content: "You are a helpful assistant. Format your responses in markdown when appropriate to make them more readable. Use headings, lists, bold, italic, and code blocks where appropriate."
         },
         ...messages
       ],
