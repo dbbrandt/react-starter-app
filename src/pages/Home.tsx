@@ -1,17 +1,17 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
+import ChatInterface from '../components/Chat/ChatInterface';
 
 const Home: React.FC = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 'calc(100vh - 120px)',
+        minHeight: 'calc(100vh - 72px)', // Account for navbar height
+        backgroundColor: '#f5f5f5',
+        paddingTop: '20px',
       }}
     >
-      <Typography variant="h2">Home</Typography>
+      <ChatInterface />
     </Box>
   );
 };
