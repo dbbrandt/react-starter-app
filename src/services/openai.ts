@@ -8,7 +8,12 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true // Note: In production, you should proxy these requests through your backend
 });
 
-export const sendMessage = async (message: string): Promise<string> => {
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+export const sendMessage = async (messages: ChatMessage[]): Promise<string> => {
   try {
     console.log('API Key:', process.env.REACT_APP_OPENAI_API_KEY); // For debugging
 
@@ -17,7 +22,13 @@ export const sendMessage = async (message: string): Promise<string> => {
     }
 
     const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: message }],
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant. Format your responses in markdown to make them more readable. Use headings, lists, bold, italic, and code blocks where appropriate."
+        },
+        ...messages
+      ],
       model: "gpt-4o",
     });
 

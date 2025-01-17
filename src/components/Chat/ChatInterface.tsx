@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, TextField, IconButton, Paper, CircularProgress } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ChatMessage from './ChatMessage';
-import { sendMessage } from '../../services/openai';
+import { sendMessage, ChatMessage as OpenAIMessage } from '../../services/openai';
 
 interface Message {
   id: number;
@@ -38,6 +38,13 @@ const ChatInterface: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  const convertToOpenAIMessages = (messages: Message[]): OpenAIMessage[] => {
+    return messages.map(msg => ({
+      role: msg.isBot ? 'assistant' : 'user',
+      content: msg.text
+    }));
+  };
+
   const handleSend = async () => {
     if (!newMessage.trim()) return;
 
@@ -58,7 +65,10 @@ const ChatInterface: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await sendMessage(newMessage);
+      // Convert all messages to OpenAI format and send them
+      const chatHistory = convertToOpenAIMessages([...messages, userMessage]);
+      const response = await sendMessage(chatHistory);
+      
       const botMessage = {
         id: messages.length + 2,
         text: response,
@@ -98,23 +108,23 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <Paper
+    <Paper 
       elevation={3}
       sx={{
         width: '75%',
-        height: 'calc(100vh - 120px)',
         margin: '20px auto',
+        height: 'calc(100vh - 140px)',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden',
       }}
     >
       <Box
         sx={{
           flex: 1,
           overflowY: 'auto',
-          padding: '20px 0',
-          backgroundColor: '#fff',
+          padding: '20px',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {messages.map((message) => (
@@ -128,46 +138,37 @@ const ChatInterface: React.FC = () => {
         ))}
         <div ref={messagesEndRef} />
       </Box>
+      
       <Box
         sx={{
           p: 2,
-          backgroundColor: '#f5f5f5',
-          borderTop: '1px solid #e0e0e0',
+          borderTop: '1px solid rgba(0, 0, 0, 0.12)',
           display: 'flex',
-          gap: 1,
+          alignItems: 'center',
         }}
       >
         <TextField
           fullWidth
-          variant="outlined"
-          placeholder="Enter your message..."
+          multiline
+          maxRows={4}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={handleKeyPress}
-          size="small"
+          placeholder="Type your message..."
           disabled={isLoading}
-          sx={{
-            backgroundColor: '#fff',
-          }}
+          sx={{ mr: 1 }}
         />
-        <IconButton
-          color="primary"
-          onClick={handleSend}
-          disabled={!newMessage.trim() || isLoading}
-          sx={{
-            backgroundColor: '#1976d2',
-            color: '#fff',
-            '&:hover': {
-              backgroundColor: '#1565c0',
-            },
-            '&.Mui-disabled': {
-              backgroundColor: '#e0e0e0',
-              color: '#9e9e9e',
-            },
-          }}
-        >
-          {isLoading ? <CircularProgress size={24} color="inherit" /> : <SendIcon />}
-        </IconButton>
+        {isLoading ? (
+          <CircularProgress size={24} />
+        ) : (
+          <IconButton 
+            color="primary" 
+            onClick={handleSend}
+            disabled={!newMessage.trim()}
+          >
+            <SendIcon />
+          </IconButton>
+        )}
       </Box>
     </Paper>
   );
