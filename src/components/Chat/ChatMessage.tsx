@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import ReactMarkdown from 'react-markdown';
 
 interface ChatMessageProps {
   message: string;
@@ -37,21 +38,59 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, sender, timestamp, i
         >
           {sender}
         </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            color: isBot ? '#000' : '#fff',
-            wordBreak: 'break-word',
-          }}
-        >
-          {message}
-        </Typography>
+        
+        {isBot ? (
+          <Box sx={{ 
+            '& .markdown-content': { 
+              color: '#000',
+              '& pre': {
+                backgroundColor: '#e0e0e0',
+                padding: '8px',
+                borderRadius: '4px',
+                overflowX: 'auto',
+              },
+              '& code': {
+                backgroundColor: '#e0e0e0',
+                padding: '2px 4px',
+                borderRadius: '4px',
+              },
+              '& h1, & h2, & h3, & h4, & h5, & h6': {
+                marginTop: '8px',
+                marginBottom: '8px',
+              },
+              '& ul, & ol': {
+                marginLeft: '20px',
+              },
+              '& p': {
+                marginBottom: '8px',
+              },
+              '& a': {
+                color: '#1976d2',
+                textDecoration: 'underline',
+              },
+            } 
+          }}>
+            <ReactMarkdown className="markdown-content">{message}</ReactMarkdown>
+          </Box>
+        ) : (
+          <Typography
+            variant="body1"
+            sx={{
+              color: '#fff',
+              wordBreak: 'break-word',
+            }}
+          >
+            {message}
+          </Typography>
+        )}
+        
         <Typography
           variant="caption"
           sx={{
-            color: isBot ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
+            color: isBot ? 'text.secondary' : 'rgba(255, 255, 255, 0.7)',
             display: 'block',
             mt: 0.5,
+            textAlign: 'right',
           }}
         >
           {timestamp}

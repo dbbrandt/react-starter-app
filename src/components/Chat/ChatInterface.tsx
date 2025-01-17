@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, TextField, IconButton, Paper, CircularProgress } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ChatMessage from './ChatMessage';
-import { generateChatResponse } from '../../services/openai';
+import { sendMessage } from '../../services/openai';
 
 interface Message {
   id: number;
@@ -39,55 +39,54 @@ const ChatInterface: React.FC = () => {
   }, [messages]);
 
   const handleSend = async () => {
-    if (newMessage.trim() && !isLoading) {
-      const currentTime = new Date().toLocaleTimeString([], { 
+    if (!newMessage.trim()) return;
+
+    const userMessage = {
+      id: messages.length + 1,
+      text: newMessage,
+      sender: 'You',
+      timestamp: new Date().toLocaleTimeString([], { 
         hour: '2-digit', 
         minute: '2-digit',
         hour12: false 
-      });
+      }),
+      isBot: false,
+    };
 
-      const userMessage: Message = {
-        id: messages.length + 1,
-        text: newMessage,
-        sender: 'You',
-        timestamp: currentTime,
-        isBot: false,
+    setMessages(prev => [...prev, userMessage]);
+    setNewMessage('');
+    setIsLoading(true);
+
+    try {
+      const response = await sendMessage(newMessage);
+      const botMessage = {
+        id: messages.length + 2,
+        text: response,
+        sender: 'ChatGPT',
+        timestamp: new Date().toLocaleTimeString([], { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }),
+        isBot: true,
       };
-
-      setMessages(prev => [...prev, userMessage]);
-      setNewMessage('');
-      setIsLoading(true);
-
-      try {
-        const response = await generateChatResponse(newMessage);
-        const botMessage: Message = {
-          id: messages.length + 2,
-          text: response,
-          sender: 'ChatGPT',
-          timestamp: new Date().toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false 
-          }),
-          isBot: true,
-        };
-        setMessages(prev => [...prev, botMessage]);
-      } catch (error) {
-        const errorMessage: Message = {
-          id: messages.length + 2,
-          text: 'Sorry, I encountered an error. Please try again.',
-          sender: 'ChatGPT',
-          timestamp: new Date().toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false 
-          }),
-          isBot: true,
-        };
-        setMessages(prev => [...prev, errorMessage]);
-      } finally {
-        setIsLoading(false);
-      }
+      setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error getting response:', error);
+      const errorMessage = {
+        id: messages.length + 2,
+        text: 'Sorry, I encountered an error while processing your request. Please try again.',
+        sender: 'ChatGPT',
+        timestamp: new Date().toLocaleTimeString([], { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }),
+        isBot: true,
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
