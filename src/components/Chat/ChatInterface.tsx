@@ -29,6 +29,7 @@ const ChatInterface: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,7 +37,11 @@ const ChatInterface: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+    // Focus input after messages update and loading is complete
+    if (!isLoading && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [messages, isLoading]);
 
   const convertToOpenAIMessages = (messages: Message[]): OpenAIMessage[] => {
     return messages.map(msg => ({
@@ -157,6 +162,7 @@ const ChatInterface: React.FC = () => {
           placeholder="Type your message..."
           disabled={isLoading}
           sx={{ mr: 1 }}
+          inputRef={inputRef}
         />
         {isLoading ? (
           <CircularProgress size={24} />
